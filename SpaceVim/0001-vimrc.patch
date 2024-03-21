@@ -1,0 +1,96 @@
+From 0c5906e93829306e0859e243545433fe2a8cce80 Mon Sep 17 00:00:00 2001
+From: Jeff Zhao <jeff.zhao@nebula-matrix.com>
+Date: Sun, 18 Sep 2022 19:25:40 -0700
+Subject: [PATCH 1/2] vimrc
+
+---
+ vimrc | 76 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 76 insertions(+)
+
+diff --git a/vimrc b/vimrc
+index fbb35a5b..1a7cc377 100644
+--- a/vimrc
++++ b/vimrc
+@@ -25,3 +25,79 @@ if 1
+     execute 'source' fnamemodify(expand('<sfile>'), ':h').'/main.vim'
+ endif
+ " vim:set et sw=2
++set cscopequickfix=c-,d-,e-,g-,i-,s-,t-
++
++
++"set clipboard=unnamedplus
++"set clipboard=unnamed
++set paste
++"set go+=a
++
++augroup myvimrc
++      autocmd!
++      autocmd QuickFixCmdPost [^l]* cwindow
++      autocmd QuickFixCmdPost l*    lwindow
++augroup END
++
++    autocmd BufWinEnter quickfix nnoremap <silent> <buffer>
++                \   q :cclose<cr>:lclose<cr>
++    autocmd BufEnter * if (winnr('$') == 1 && &buftype ==# 'quickfix' ) |
++                \   bd|
++                \   q | endif
++
++set nonu
++set nornu
++set mouse=
++nnoremap <F1> :call <SID>switch_number()<CR>
++
++function! s:switch_number()
++setlocal number!
++setlocal relativenumber!
++endfunction
++
++nmap <silent> gd <Plug>(coc-definition)
++nmap <silent> gy <Plug>(coc-type-definition)
++nmap <silent> gi <Plug>(coc-implementation)
++nmap <silent> gr <Plug>(coc-references)
++
++" grep word under cursor
++command! -nargs=+ -complete=custom,s:GrepArgs Rg exe 'CocList grep '.<q-args>
++
++function! s:GrepArgs(...)
++  let list = ['-S', '-smartcase', '-i', '-ignorecase', '-w', '-word',
++        \ '-e', '-regex', '-u', '-skip-vcs-ignores', '-t', '-extension']
++  return join(list, "\n")
++endfunction
++
++" Keymapping for grep word under cursor with interactive mode
++nnoremap <silent> gf :exe 'CocList -I --input='.expand('<cword>').' grep'<CR>
++
++"nnoremap <F4> :call <SID>zoom()<CR>
++"function! s:zoom()
++"	if winnr('$') > 1
++"		tab split
++"	elseif len(filter(map(range(tabpagenr('$')), 'tabpagebuflist(v:val + 1)'),
++"				\ 'index(v:val, '.bufnr('').') >= 0')) > 1
++"		tabclose
++"	endif
++"endfunction
++"autocmd TextYankPost * call YankDebounced()
++
++"function! Yank(timer)
++"    call system('win32yank.exe -i --crlf', @")
++"    redraw!
++"endfunction
++
++"let g:yank_debounce_time_ms = 500
++"let g:yank_debounce_timer_id = -1
++
++"function! YankDebounced()
++"    let l:now = localtime()
++"    call timer_stop(g:yank_debounce_timer_id)
++"    let g:yank_debounce_timer_id = timer_start(g:yank_debounce_time_ms, 'Yank')
++"endfunction
++
++"get some autoselect interaction with the system clipboard
++"set guioptions=aA
++
++
+-- 
+2.25.1
+
